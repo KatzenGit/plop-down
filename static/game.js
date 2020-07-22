@@ -1,13 +1,14 @@
 const socket = io();
 let canvas = document.getElementById('canvas');
 
+// Wait For P5JS
 let ready = false;
-
 function setup() {
     createCanvas(400, 400);
     ready = true;
 }
 
+// Movement
 let movement = {
     up: false,
     down: false,
@@ -48,6 +49,7 @@ document.addEventListener('keyup', function(event) {
     }
 });
 
+// Tick
 socket.on('state', function(players) {
     if(!ready) return;
 
@@ -60,11 +62,12 @@ socket.on('state', function(players) {
     for (const id in players) {
         let player = players[id];
 
-        stroke(player.color[0], player.color[1], player.color[2]);
-        rect(player.x, player.y, 20, 20);
+        fill(player.color[0], player.color[1], player.color[2]);
+        rect(player.x, player.y, player.size, player.size);
     }
 });
 
+// Register New Player
 socket.emit('new player');
 
 // Send State
