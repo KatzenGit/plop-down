@@ -20,9 +20,12 @@ app.get("/", function(req, res) {
 let players = {};
 io.on('connection', function(socket) {
     socket.on('new player', function() {
+        console.log("New Player Registered!");
+
         players[socket.id] = {
             x: 200,
             y: 200,
+            size: 20,
             movementSpeed: 2,
             color: [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ]
         };
@@ -41,10 +44,19 @@ io.on('connection', function(socket) {
         if (data.down) {
             player.y += player.movementSpeed;
         }
+
+        if (player.x - player.size / 2 < 0) player.x = player.size / 2;
+        if (player.y - player.size / 2 < 0) player.y = player.size / 2;
+        if (player.x - player.size / 2 > 400 - player.size) player.x = 400 - player.size / 2;
+        if (player.y - player.size / 2 > 400 - player.size) player.y = 400 - player.size / 2;
     });
 
     socket.on("setting", function(data) {
         players[socket.id][data.key] = data.value;
+    });
+
+    socket.on("disconnect", function() {
+        players[socket.id] = undefined;
     });
 });
 
